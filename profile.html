@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Varsha — Engineer. Builder. Climber.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+  <style>
+    /* ========== TOKENS ========== */
+    :root {
+      --bg:           #FAF7F2;
+      --bg-dark:      #101210;
+      --text:         #18181B;
+      --text-muted:   #8C8575;
+      --accent:       #2D5A4F;
+      --accent-warm:  #E07848;
+      --accent-light: #D4EDE8;
+      --border:       #E5DFD5;
+      --white:        #FFFFFF;
+      --card:         #F4F0E8;
+
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans:  'DM Sans', system-ui, sans-serif;
+      --ease:  cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* ========== RESET ========== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      cursor: none;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ========== CURSOR ========== */
+    #cur-dot {
+      position: fixed; width: 8px; height: 8px;
+      background: var(--accent-warm); border-radius: 50%;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%,-50%);
+      transition: opacity .15s;
+    }
+    #cur-ring {
+      position: fixed; width: 36px; height: 36px;
+      border: 1.5px solid var(--accent); border-radius: 50%;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%,-50%);
+      transition: width .2s var(--ease), height .2s var(--ease), border-color .2s, left .08s, top .08s;
+    }
+
+    /* ========== NAV ========== */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 3rem;
+      background: rgba(250,247,242,.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid transparent;
+      transition: border-color .3s;
+    }
+    nav.scrolled { border-color: var(--border); }
+    .nav-logo {
+      font-family: var(--serif); font-size: 1.4rem; font-weight: 600;
+      letter-spacing: -.01em;
+    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-size: .8rem; font-weight: 500; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--text-muted);
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ========== HERO ========== */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 3rem 4.5rem;
+      position: relative; overflow: hidden;
+    }
+    .hero-blob {
+      position: absolute; top: -8%; right: -4%;
+      width: 52%; height: 72%;
+      background: var(--accent-light);
+      border-radius: 2rem 2rem 9rem 2rem;
+      opacity: .45; transform: rotate(-4deg);
+      z-index: 0;
+    }
+    .hero-blob-2 {
+      position: absolute; bottom: 8%; left: -3%;
+      width: 20%; height: 30%;
+      background: #f0e8e0;
+      border-radius: 50%;
+      opacity: .5;
+      z-index: 0;
+    }
+    .hero-content { position: relative; z-index: 1; }
+
+    .hero-eyebrow {
+      font-size: .75rem; font-weight: 500;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1rem;
+      opacity: 0; transform: translateY(16px);
+      animation: fadeUp .7s var(--ease) .3s forwards;
+    }
+    .hero-name {
+      font-family: var(--serif);
+      font-size: clamp(5.5rem, 15vw, 14rem);
+      font-weight: 300; line-height: .88;
+      letter-spacing: -.04em;
+      opacity: 0; transform: translateY(40px);
+      animation: fadeUp .9s var(--ease) .5s forwards;
+      margin-bottom: 2rem;
+    }
+    .hero-name em { font-style: italic; color: var(--accent); }
+
+    .hero-row {
+      display: flex; align-items: flex-end; gap: 4rem;
+      opacity: 0; transform: translateY(20px);
+      animation: fadeUp .7s var(--ease) .85s forwards;
+    }
+    .hero-tagline {
+      font-family: var(--serif);
+      font-size: clamp(1.35rem, 2.8vw, 2.1rem);
+      font-weight: 300; line-height: 1.35;
+      max-width: 480px;
+    }
+    .hero-tagline strong { font-weight: 600; }
+
+    .hero-btns { display: flex; flex-direction: column; gap: .75rem; }
+    .btn-p {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .7rem 1.5rem;
+      background: var(--accent); color: var(--white);
+      border-radius: 100px; font-size: .82rem; font-weight: 500;
+      transition: background .2s, transform .2s var(--spring);
+    }
+    .btn-p:hover { background: var(--bg-dark); transform: scale(1.03); }
+    .btn-s {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-size: .82rem; font-weight: 500; color: var(--text-muted);
+      padding: .7rem 0; border-bottom: 1px solid var(--border);
+      transition: color .2s, border-color .2s;
+    }
+    .btn-s:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ========== TICKER ========== */
+    .ticker {
+      background: var(--accent); padding: .85rem 0;
+      overflow: hidden; white-space: nowrap;
+    }
+    .ticker-track {
+      display: inline-flex;
+      animation: ticker 32s linear infinite;
+    }
+    .t-item {
+      display: inline-flex; align-items: center; gap: 1.5rem;
+      font-size: .75rem; font-weight: 500;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: var(--white); padding-right: 2.5rem;
+    }
+    .t-dot { width: 4px; height: 4px; background: var(--accent-warm); border-radius: 50%; flex-shrink:0; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ========== SECTION COMMONS ========== */
+    section { padding: 6rem 3rem; }
+    .lbl {
+      font-size: .72rem; font-weight: 500; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--accent-warm);
+      margin-bottom: .75rem; display: block;
+    }
+    .sh {
+      font-family: var(--serif);
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 400; line-height: 1.08;
+      letter-spacing: -.025em;
+    }
+    .sh em { font-style: italic; color: var(--accent); }
+
+    /* reveal */
+    .rv {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity .7s var(--ease), transform .7s var(--ease);
+    }
+    .rv.on { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: .1s; }
+    .d2 { transition-delay: .2s; }
+    .d3 { transition-delay: .3s; }
+    .d4 { transition-delay: .4s; }
+    .d5 { transition-delay: .5s; }
+
+    /* ========== ABOUT ========== */
+    #about { padding: 6rem 3rem; }
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 5rem; align-items: center;
+      max-width: 1180px; margin: 0 auto;
+    }
+    .about-pic { position: relative; }
+    .about-frame {
+      aspect-ratio: 4/5;
+      background: var(--accent-light);
+      border-radius: 1rem 4rem 1rem 4rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9rem; color: var(--accent); opacity: .35;
+      font-family: var(--serif);
+      overflow: hidden;
+    }
+    .about-frame img { width: 100%; height: 100%; object-fit: cover; opacity: 1; }
+    .spin-badge {
+      position: absolute; bottom: -1.5rem; right: -1.5rem;
+      width: 126px; height: 126px;
+      background: var(--accent-warm); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+      font-size: .65rem; font-weight: 600; letter-spacing: .05em;
+      text-transform: uppercase; line-height: 1.45;
+      color: white; padding: 1rem;
+      animation: spin 22s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .about-text .sh { margin-bottom: 1.75rem; }
+    .about-body { font-size: 1.02rem; line-height: 1.78; }
+    .about-body p+p { margin-top: 1.2rem; }
+    .about-body strong { font-weight: 600; color: var(--accent); }
+
+    .about-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+      margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--border);
+    }
+    .stat .num {
+      font-family: var(--serif); font-size: 2.8rem; font-weight: 600;
+      color: var(--accent); line-height: 1;
+    }
+    .stat .tag {
+      font-size: .7rem; font-weight: 500; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--text-muted); margin-top: .25rem;
+    }
+
+    /* ========== BUILDS ========== */
+    .builds-section {
+      background: var(--bg-dark); color: var(--white);
+    }
+    .builds-section .lbl { color: var(--accent-warm); }
+    .builds-section .sh { color: var(--white); margin-bottom: 3rem; }
+    .builds-section .sh em { color: var(--accent-light); }
+
+    .builds-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 1.5px; background: #232320;
+      border: 1.5px solid #232320; border-radius: 1rem;
+      overflow: hidden; max-width: 1100px; margin: 0 auto;
+    }
+    .bc {
+      background: #181816; padding: 2.5rem;
+      transition: background .3s; position: relative; overflow: hidden;
+    }
+    .bc::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 2px; background: var(--accent-warm);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .35s var(--ease);
+    }
+    .bc:hover { background: #1c2b24; }
+    .bc:hover::after { transform: scaleX(1); }
+    .bc-num {
+      font-family: var(--serif); font-size: 3.5rem; font-weight: 300;
+      color: #2e2e2c; line-height: 1; margin-bottom: 1.5rem;
+      transition: color .3s;
+    }
+    .bc:hover .bc-num { color: var(--accent-warm); }
+    .bc-title {
+      font-family: var(--serif); font-size: 1.55rem; font-weight: 400;
+      color: var(--white); margin-bottom: .7rem; line-height: 1.2;
+    }
+    .bc-desc { font-size: .88rem; line-height: 1.65; color: #888; margin-bottom: 1.5rem; }
+    .bc-tags { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .bc-tag {
+      font-size: .68rem; font-weight: 500; letter-spacing: .06em;
+      text-transform: uppercase; padding: .28rem .7rem;
+      border: 1px solid #2d4a40; border-radius: 100px; color: var(--accent-light);
+    }
+
+    /* ========== PHOTO STRIP ========== */
+    .strip-wrap {
+      overflow: hidden; padding: 2.5rem 0;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .strip-track {
+      display: flex; gap: 1rem;
+      animation: strip 40s linear infinite;
+      width: max-content;
+    }
+    .strip-item {
+      width: 190px; height: 145px; border-radius: .75rem;
+      flex-shrink: 0; display: flex; align-items: center;
+      justify-content: center; font-size: 3rem;
+      background: var(--accent-light);
+    }
+    .strip-item:nth-child(2n)   { background: #f0e8e0; margin-top: 1.5rem; }
+    .strip-item:nth-child(3n)   { background: #e8f0e0; margin-top: -.8rem; }
+    .strip-item:nth-child(4n)   { background: #f0e0e8; margin-top: .5rem; }
+    @keyframes strip { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    /* ========== LIFE ========== */
+    #life { max-width: 1200px; margin: 0 auto; }
+    .life-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto auto;
+      gap: 1.25rem; margin-top: 3rem;
+    }
+    .lc {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 1rem; padding: 2rem;
+      transition: transform .3s var(--spring), box-shadow .3s;
+    }
+    .lc:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 14px 44px rgba(0,0,0,.07);
+    }
+    .lc.featured {
+      grid-column: 2; grid-row: 1 / 3;
+      background: var(--accent); border-color: var(--accent); color: white;
+    }
+    .lc-emoji { font-size: 2.2rem; margin-bottom: .9rem; display: block; }
+    .lc-title {
+      font-family: var(--serif); font-size: 1.3rem; font-weight: 600;
+      margin-bottom: .5rem;
+    }
+    .lc.featured .lc-title { font-size: 2rem; line-height: 1.15; }
+    .lc-desc { font-size: .85rem; line-height: 1.65; color: var(--text-muted); }
+    .lc.featured .lc-desc { color: rgba(255,255,255,.82); font-size: .95rem; margin-top: .9rem; }
+
+    /* ========== VALUES ========== */
+    .values-section { background: #F0EBE3; }
+    .values-inner { max-width: 1180px; margin: 0 auto; }
+    .vlist {
+      display: grid; gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 1rem; overflow: hidden;
+      margin-top: 3rem;
+    }
+    .vrow {
+      display: flex; align-items: center; gap: 3rem;
+      padding: 1.8rem 2.5rem;
+      background: #F0EBE3; transition: background .2s;
+    }
+    .vrow:hover { background: var(--white); }
+    .vn {
+      font-family: var(--serif); font-size: 1.1rem; font-weight: 400;
+      color: var(--text-muted); min-width: 2rem;
+    }
+    .vtitle {
+      font-family: var(--serif); font-size: 1.7rem;
+      font-weight: 400; flex: 1;
+    }
+    .vdesc {
+      font-size: .85rem; color: var(--text-muted);
+      line-height: 1.65; max-width: 350px;
+    }
+
+    /* ========== CONTACT ========== */
+    .contact-section {
+      background: var(--bg-dark); color: var(--white);
+      text-align: center; padding: 8rem 3rem;
+    }
+    .contact-section .lbl { color: var(--accent-warm); justify-content: center; display: block; }
+    .contact-section .sh {
+      color: var(--white);
+      font-size: clamp(2.5rem, 6vw, 5.5rem);
+      max-width: 680px; margin: 0 auto 1.25rem;
+    }
+    .contact-section .sh em { color: var(--accent-warm); }
+    .c-sub { color: #777; font-size: .95rem; margin-bottom: 3rem; }
+    .c-links { display: flex; justify-content: center; gap: 1.25rem; flex-wrap: wrap; }
+    .cl {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .8rem 1.75rem;
+      border: 1px solid #2e2e2e; border-radius: 100px;
+      font-size: .82rem; font-weight: 500; color: #aaa;
+      transition: all .2s;
+    }
+    .cl:hover { background: var(--white); border-color: var(--white); color: var(--bg-dark); }
+    .cl.main { background: var(--accent-warm); border-color: var(--accent-warm); color: white; }
+    .cl.main:hover { background: var(--accent); border-color: var(--accent); }
+    .c-loc {
+      margin-top: 4rem; padding-top: 3rem;
+      border-top: 1px solid #1e1e1e;
+      display: flex; align-items: center; justify-content: center;
+      gap: .5rem; color: #444; font-size: .78rem;
+    }
+
+    /* ========== FOOTER ========== */
+    footer {
+      background: var(--bg-dark); color: #333;
+      padding: 1.25rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: .73rem; border-top: 1px solid #181818;
+    }
+
+    /* ========== KEYFRAMES ========== */
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      section { padding: 4rem 1.5rem; }
+      #about { padding: 4rem 1.5rem; }
+      .hero { padding: 0 1.5rem 3rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .about-pic { order: -1; }
+      .builds-grid { grid-template-columns: 1fr; }
+      .life-grid { grid-template-columns: 1fr; }
+      .lc.featured { grid-column: auto; grid-row: auto; }
+      .vrow { flex-wrap: wrap; gap: .75rem; }
+      .vdesc { max-width: 100%; }
+      footer { flex-direction: column; gap: .5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <span class="nav-logo">Varsha</span>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#builds">Work</a></li>
+    <li><a href="#life">Life</a></li>
+    <li><a href="#contact">Say hi</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-blob"></div>
+  <div class="hero-blob-2"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Software Engineer · AI Builder · Amsterdam 🇳🇱</p>
+    <h1 class="hero-name">Var<em>sha</em></h1>
+    <div class="hero-row">
+      <p class="hero-tagline">
+        I build <strong>systems that make AI work</strong> for real people.<br>
+        And yes — I'm also the one on the climbing wall at 7am.
+      </p>
+      <div class="hero-btns">
+        <a href="#contact" class="btn-p">Let's talk &nbsp;→</a>
+        <a href="#builds" class="btn-s">See what I build &nbsp;↓</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="t-item">Open to good problems <span class="t-dot"></span></span>
+    <span class="t-item">AI Agent Tooling <span class="t-dot"></span></span>
+    <span class="t-item">FastAPI Architect <span class="t-dot"></span></span>
+    <span class="t-item">Bouldering at dawn <span class="t-dot"></span></span>
+    <span class="t-item">Based in 🇳🇱 <span class="t-dot"></span></span>
+    <span class="t-item">Clean code, clean architecture <span class="t-dot"></span></span>
+    <span class="t-item">Handstands in progress <span class="t-dot"></span></span>
+    <span class="t-item">Planning adventures <span class="t-dot"></span></span>
+    <span class="t-item">Open to good problems <span class="t-dot"></span></span>
+    <span class="t-item">AI Agent Tooling <span class="t-dot"></span></span>
+    <span class="t-item">FastAPI Architect <span class="t-dot"></span></span>
+    <span class="t-item">Bouldering at dawn <span class="t-dot"></span></span>
+    <span class="t-item">Based in 🇳🇱 <span class="t-dot"></span></span>
+    <span class="t-item">Clean code, clean architecture <span class="t-dot"></span></span>
+    <span class="t-item">Handstands in progress <span class="t-dot"></span></span>
+    <span class="t-item">Planning adventures <span class="t-dot"></span></span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-pic rv">
+      <div class="about-frame">✦</div>
+      <div class="spin-badge">Drop your photo here ✦</div>
+    </div>
+    <div>
+      <span class="lbl rv">About me</span>
+      <h2 class="sh rv d1">Engineer by trade,<br><em>builder by nature</em></h2>
+      <div class="about-body rv d2">
+        <p>
+          I build AI agent tooling and backend systems that actually ship.
+          My day-to-day lives at the intersection of <strong>clean architecture</strong>,
+          <strong>FastAPI</strong>, and making AI do useful things reliably — not just impressively.
+        </p>
+        <p>
+          Based in Amsterdam, originally from India. I think the best software is the kind that
+          quietly just works, and I spend a lot of time thinking about the patterns that make that
+          possible — thread authorization modules, reusable skill frameworks, agentic pipelines.
+        </p>
+        <p>
+          Outside of work? You'll find me bouldering walls, logging Saturday miles on the bike,
+          playing badminton on Wednesdays, or planning the next adventure. I'm working on
+          handstands this year. Turns out that's genuinely hard.
+        </p>
+      </div>
+      <div class="about-stats rv d3">
+        <div class="stat">
+          <div class="num">5×</div>
+          <div class="tag">Gym per week</div>
+        </div>
+        <div class="stat">
+          <div class="num">NL</div>
+          <div class="tag">Amsterdam-based</div>
+        </div>
+        <div class="stat">
+          <div class="num">∞</div>
+          <div class="tag">Oatmeal varieties</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUILDS -->
+<section class="builds-section" id="builds">
+  <span class="lbl rv">What I Build</span>
+  <h2 class="sh rv d1">AI tooling that<br><em>ships, not demos</em></h2>
+  <div class="builds-grid">
+    <div class="bc rv d1">
+      <div class="bc-num">01</div>
+      <h3 class="bc-title">AI Agent Tooling Framework</h3>
+      <p class="bc-desc">Reusable code-review skills within Claude's skill-creator framework. Agentic pipelines that are modular, testable, and maintainable — not just one big prompt doing magic.</p>
+      <div class="bc-tags">
+        <span class="bc-tag">Agents</span>
+        <span class="bc-tag">Claude</span>
+        <span class="bc-tag">Python</span>
+        <span class="bc-tag">Tooling</span>
+      </div>
+    </div>
+    <div class="bc rv d2">
+      <div class="bc-num">02</div>
+      <h3 class="bc-title">FastAPI Backend Architecture</h3>
+      <p class="bc-desc">Thread authorization across layered handlers and controllers. Landed on a ThreadAuthorization module pattern — avoids double-fetches while keeping clean architectural boundaries.</p>
+      <div class="bc-tags">
+        <span class="bc-tag">FastAPI</span>
+        <span class="bc-tag">Architecture</span>
+        <span class="bc-tag">Backend</span>
+        <span class="bc-tag">Python</span>
+      </div>
+    </div>
+    <div class="bc rv d3">
+      <div class="bc-num">03</div>
+      <h3 class="bc-title">LifeSync · Personal OS</h3>
+      <p class="bc-desc">A skill system for structured daily planning — cycle-synced, habit-aware, and actually useful. Because running your life well is also an engineering problem worth solving properly.</p>
+      <div class="bc-tags">
+        <span class="bc-tag">Claude Skills</span>
+        <span class="bc-tag">Productivity</span>
+        <span class="bc-tag">Systems</span>
+      </div>
+    </div>
+    <div class="bc rv d4">
+      <div class="bc-num">04</div>
+      <h3 class="bc-title">Competencies Mapping</h3>
+      <p class="bc-desc">Building structured frameworks for competency tracking and skill mapping at work. Clean data models, real organizational impact, and the quiet satisfaction of things fitting together.</p>
+      <div class="bc-tags">
+        <span class="bc-tag">Data Modeling</span>
+        <span class="bc-tag">Systems Design</span>
+        <span class="bc-tag">Ongoing</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHOTO STRIP (placeholders — swap for real photos) -->
+<div class="strip-wrap">
+  <div class="strip-track">
+    <div class="strip-item">🧗</div>
+    <div class="strip-item">🚴</div>
+    <div class="strip-item">🏸</div>
+    <div class="strip-item">🏋️</div>
+    <div class="strip-item">✈️</div>
+    <div class="strip-item">🌿</div>
+    <div class="strip-item">🤸</div>
+    <div class="strip-item">🌅</div>
+    <div class="strip-item">🧗</div>
+    <div class="strip-item">🚴</div>
+    <div class="strip-item">🏸</div>
+    <div class="strip-item">🏋️</div>
+    <div class="strip-item">✈️</div>
+    <div class="strip-item">🌿</div>
+    <div class="strip-item">🤸</div>
+    <div class="strip-item">🌅</div>
+  </div>
+</div>
+
+<!-- LIFE -->
+<section id="life">
+  <div id="life">
+    <span class="lbl rv">Beyond the code</span>
+    <h2 class="sh rv d1">What I do when<br><em>the terminal is closed</em></h2>
+    <div class="life-grid">
+      <div class="lc rv d1">
+        <span class="lc-emoji">🧗</span>
+        <h3 class="lc-title">Bouldering</h3>
+        <p class="lc-desc">Sunday sessions on the wall. It's puzzles you solve with your whole body — which makes it perfect for a systems brain.</p>
+      </div>
+
+      <div class="lc featured rv d2">
+        <span class="lc-emoji">🏃</span>
+        <h3 class="lc-title">Fitness is my thing — and I keep adding to it.</h3>
+        <p class="lc-desc">Gym 5× a week. Badminton Wednesdays. Biking Saturdays. Bouldering Sundays. Running is next on the list. 2026 goal: pull-ups and handstands. Turns out the body is also a system worth building well.</p>
+      </div>
+
+      <div class="lc rv d3">
+        <span class="lc-emoji">🚴</span>
+        <h3 class="lc-title">Biking in NL</h3>
+        <p class="lc-desc">Living in the Netherlands and not biking everywhere would honestly be a crime. Saturday ritual, no exceptions.</p>
+      </div>
+
+      <div class="lc rv d3">
+        <span class="lc-emoji">🏸</span>
+        <h3 class="lc-title">Badminton</h3>
+        <p class="lc-desc">Wednesday evenings. Competitive by nature. Shows up for joy, stays for the rally.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="values-section">
+  <div class="values-inner">
+    <span class="lbl rv">Why work with me</span>
+    <h2 class="sh rv d1">What I bring<br><em>to the table</em></h2>
+    <div class="vlist rv d2">
+      <div class="vrow">
+        <span class="vn">01</span>
+        <h3 class="vtitle">I think in systems</h3>
+        <p class="vdesc">Whether it's an auth module or a daily routine, I look for the clean pattern underneath — and I build it to last.</p>
+      </div>
+      <div class="vrow">
+        <span class="vn">02</span>
+        <h3 class="vtitle">I ship things</h3>
+        <p class="vdesc">No design-by-committee, no feature-complete-or-nothing. I get things to done, then make them better.</p>
+      </div>
+      <div class="vrow">
+        <span class="vn">03</span>
+        <h3 class="vtitle">I build for real humans</h3>
+        <p class="vdesc">AI tooling only matters if people can actually use it. I keep the human end in view at every layer.</p>
+      </div>
+      <div class="vrow">
+        <span class="vn">04</span>
+        <h3 class="vtitle">I bring depth and breadth</h3>
+        <p class="vdesc">Backend architecture, AI agents, personal systems, financial admin across borders — I move across domains and find the thread.</p>
+      </div>
+      <div class="vrow">
+        <span class="vn">05</span>
+        <h3 class="vtitle">I bother to care</h3>
+        <p class="vdesc">I nominate colleagues. I document properly. I notice when something's off and I say so. The human side of engineering isn't soft — it's load-bearing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <span class="lbl">Say hello</span>
+  <h2 class="sh">Let's build<br><em>something good.</em></h2>
+  <p class="c-sub">No pitch needed. Just a real conversation.</p>
+  <div class="c-links">
+    <a href="https://nl.linkedin.com/in/varsha38977" target="_blank" class="cl main">LinkedIn ↗</a>
+    <a href="mailto:your@email.com" class="cl">Email me</a>
+    <a href="#" class="cl">Download CV</a>
+  </div>
+  <div class="c-loc">
+    <span>📍</span>
+    <span>Amsterdam, Netherlands · open to remote</span>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Varsha</span>
+  <span>Engineer · Builder · Climber</span>
+</footer>
+
+<script>
+  /* cursor */
+  const dot  = document.getElementById('cur-dot');
+  const ring = document.getElementById('cur-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  (function anim() {
+    dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+    rx += (mx - rx) * 0.14; ry += (my - ry) * 0.14;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(anim);
+  })();
+  document.querySelectorAll('a,button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      ring.style.width = '54px'; ring.style.height = '54px';
+      ring.style.borderColor = 'var(--accent-warm)';
+      dot.style.opacity = '0';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '36px'; ring.style.height = '36px';
+      ring.style.borderColor = 'var(--accent)';
+      dot.style.opacity = '1';
+    });
+  });
+
+  /* nav scroll */
+  window.addEventListener('scroll', () => {
+    document.getElementById('nav').classList.toggle('scrolled', scrollY > 60);
+  });
+
+  /* scroll reveal */
+  new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('on'); });
+  }, { threshold: 0.12 }).observe !== undefined &&
+  document.querySelectorAll('.rv').forEach(el =>
+    new IntersectionObserver(([e]) => { if(e.isIntersecting) el.classList.add('on'); }, {threshold:.12}).observe(el)
+  );
+</script>
+</body>
+</html>
